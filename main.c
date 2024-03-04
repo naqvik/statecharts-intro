@@ -21,5 +21,8 @@ typedef enum  {OFF, SLOW, MEDIUM, FAST} CurrState;
 CurrState currState = OFF;
 
 int main() {
-    printf("currState: %d\n", currState);
+    while (1) {
+        printf("currState: %d\n", currState);
+        sleep(1);  // sleep 1 second
+    }
 }
