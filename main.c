@@ -26,24 +26,24 @@ bool onOffButton() {
     static uint32_t idx = 0;
 
     bool retval = sequence[idx];
-    idx = (idx+1) & sequence_size;
+    idx = (idx+1) % sequence_size;
     return retval;
 }
 bool changeSpeedButton() {
-    static const bool sequence[] = {1,0,0,1,1,0,0,1,1,0,0,};
+    static const bool sequence[] = {0,1,0,0,1,1,0,0,1,1,0,0,};
     uint32_t sequence_size = sizeof(sequence)/sizeof(sequence[0]);
     static uint32_t idx = 0;
 
     bool retval = sequence[idx];
-    idx = (idx+1) & sequence_size;
+    idx = (idx+1) % sequence_size;
     return retval;
 }
 
 void updateState(CurrState cs) {
-        bool onoff = onOffButton();
+    bool onoff = onOffButton();
     bool speed = changeSpeedButton();
 
-    printf("currState: %d\n", currState);
+    printf("currState: %d, ", cs);
     printf("onoff: %d, speed: %d\n", onoff, speed);
 }
 
