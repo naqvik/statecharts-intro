@@ -14,6 +14,8 @@
 
 #include <stdio.h>
 #include <stdint.h>
+#include <unistd.h>  // sleep(3)
+#include <stdbool.h> // bool, true, false
 
 typedef enum  {OFF, SLOW, MEDIUM, FAST} CurrState;
 CurrState currState = OFF;
