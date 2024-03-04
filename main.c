@@ -15,8 +15,9 @@
 #include <stdio.h>
 #include <stdint.h>
 
-static enum currSpeed {OFF, SLOW, MEDIUM, FAST};
+typedef enum  {OFF, SLOW, MEDIUM, FAST} CurrState;
+CurrState currState = OFF;
 
 int main() {
-    printf("hello world\n");
+    printf("currState: %d\n", currState);
 }
