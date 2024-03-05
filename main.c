@@ -1,4 +1,4 @@
-/**
+/** -*- c++ -*-
    Implementation of a three-speed fan with two pushbuttons:
    Buttons:
    1. CHANGE (momentary contact?)
