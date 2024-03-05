@@ -50,36 +50,55 @@ bool changeSpeedButton() {
     return retval;
 }
 
+void displayState(CurrState inState,
+                  bool onoff_pressed, bool speed_pressed,
+                  CurrState outState) {
+    typedef struct {CurrState s; char const * const txt;} MapEnumToText;
+    MapEnumToText map[] = {
+        {OFF, "OFF"},
+        {SLOW, "SLOW"},
+        {MEDIUM, "MEDIUM"},
+        {FAST, "FAST"},
+    };
+    printf("in-state: %7s, ", map[inState].txt);
+
+    printf("onoff pressed: %d, speed pressed: %d, ",
+           onoff_pressed, speed_pressed);
+
+    printf("out-state: %7s\n", map[outState].txt);
+}
 void updateState() {
     // poll the two buttons
-    bool onoff = onOffButton();
-    bool speed = changeSpeedButton();
+    bool onoff_pressed = onOffButton();
+    bool speed_pressed = changeSpeedButton();
+
+    CurrState inState = currState;
 
     switch (currState) {
     case OFF:
         setSpeed(stop_rpm);
-        if (onoff || speed) currState = SLOW;
+        if (onoff_pressed || speed_pressed) currState = SLOW;
         break;
     case SLOW:
         setSpeed(slow_rpm);
-        if (onoff)
+        if (onoff_pressed)
             currState = OFF;
-        else if (speed)
+        else if (speed_pressed)
             currState = MEDIUM;
         break;
     case MEDIUM:
         setSpeed(medium_rpm);
-        if (onoff)
+        if (onoff_pressed)
             currState = OFF;
-        else if (speed)
+        else if (speed_pressed)
             currState = FAST;
         break;
     case FAST:
         setSpeed(fast_rpm);
-        if (onoff) {
+        if (onoff_pressed) {
             currState = OFF;
             setSpeed(stop_rpm);
-        } else if (speed){
+        } else if (speed_pressed){
             currState = SLOW;
             setSpeed(slow_rpm);
         }
@@ -88,6 +107,8 @@ void updateState() {
         printf("ERROR: unexpected state: %d", currState);
         exit(1);
     }
+    CurrState outState = currState;
+    displayState(inState, onoff_pressed, speed_pressed, outState);
 }
 
 int main() {
