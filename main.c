@@ -19,16 +19,24 @@
 #include <stdbool.h> // bool, true, false
 
 typedef enum  {OFF, SLOW, MEDIUM, FAST} FanState;
-FanState currState = OFF;
 typedef uint32_t RPM;
-RPM currentSpeed_rpm = 0;
 static RPM const stop_rpm = 0;
 static RPM const slow_rpm = 60;
 static RPM const medium_rpm = 90;
 static RPM const fast_rpm = 120;
 
-void setSpeed(RPM rpm) {
-    currentSpeed_rpm = rpm;
+typedef struct {
+    FanState currState;
+    RPM currentSpeed_rpm;
+} Fan;
+
+void fan_init(Fan *f) {
+    f->currState = OFF;
+    f->currentSpeed_rpm = stop_rpm;
+}
+
+void fan_setSpeed(Fan *f, RPM rpm) {
+    f->currentSpeed_rpm = rpm;
 }
 
 bool onOffButton() {
@@ -67,44 +75,47 @@ void displayState(FanState inState,
 
     printf("out-state: %7s\n", map[outState].txt);
 }
-void updateState() {
+void fan_updateState(Fan* f) {
     // poll the two buttons
     bool onoff_pressed = onOffButton();
     bool speed_pressed = changeSpeedButton();
 
-    FanState inState = currState;
+    FanState inState = f->currState;
 
-    switch (currState) {
+    switch (f->currState) {
     case OFF:
-        setSpeed(stop_rpm);
-        if (onoff_pressed || speed_pressed) currState = SLOW;
+        fan_setSpeed(f, stop_rpm);
+        if (onoff_pressed || speed_pressed) f->currState = SLOW;
         break;
     case SLOW:
-        setSpeed(slow_rpm);
-        if (onoff_pressed) currState = OFF;
-        if (speed_pressed) currState = MEDIUM;
+        fan_setSpeed(f, slow_rpm);
+        if (onoff_pressed) f->currState = OFF;
+        if (speed_pressed) f->currState = MEDIUM;
         break;
     case MEDIUM:
-        setSpeed(medium_rpm);
-        if (onoff_pressed) currState = OFF;
-        if (speed_pressed) currState = FAST;
+        fan_setSpeed(f, medium_rpm);
+        if (onoff_pressed) f->currState = OFF;
+        if (speed_pressed) f->currState = FAST;
         break;
     case FAST:
-        setSpeed(fast_rpm);
-        if (onoff_pressed) currState = OFF;
-        if (speed_pressed) currState = SLOW;
+        fan_setSpeed(f, fast_rpm);
+        if (onoff_pressed) f->currState = OFF;
+        if (speed_pressed) f->currState = SLOW;
         break;
     default:
-        printf("ERROR: unexpected state: %d", currState);
+        printf("ERROR: unexpected state: %d", f->currState);
         exit(1);
     }
-    FanState outState = currState;
+    FanState outState = f->currState;
     displayState(inState, onoff_pressed, speed_pressed, outState);
 }
 
 int main() {
+    Fan f;
+    fan_init(&f);
+    
     while (1) {
-        updateState();
+        fan_updateState(&f);
         sleep(1);  // sleep 1 second
     }
 }
