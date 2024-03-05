@@ -13,12 +13,23 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdint.h>
 #include <unistd.h>  // sleep(3)
 #include <stdbool.h> // bool, true, false
 
 typedef enum  {OFF, SLOW, MEDIUM, FAST} CurrState;
 CurrState currState = OFF;
+typedef uint32_t RPM;
+RPM currentSpeed_rpm = 0;
+static RPM const stop_rpm = 0;
+static RPM const slow_rpm = 60;
+static RPM const medium_rpm = 90;
+static RPM const fast_rpm = 120;
+
+void setSpeed(RPM rpm) {
+    currentSpeed_rpm = rpm;
+}
 
 bool onOffButton() {
     static const bool sequence[] = {1,0,0,0,0,0,0,};
@@ -39,17 +50,49 @@ bool changeSpeedButton() {
     return retval;
 }
 
-void updateState(CurrState cs) {
+void updateState() {
+    // poll the two buttons
     bool onoff = onOffButton();
     bool speed = changeSpeedButton();
 
-    printf("currState: %d, ", cs);
-    printf("onoff: %d, speed: %d\n", onoff, speed);
+    switch (currState) {
+    case OFF:
+        setSpeed(stop_rpm);
+        if (onoff || speed) currState = SLOW;
+        break;
+    case SLOW:
+        setSpeed(slow_rpm);
+        if (onoff)
+            currState = OFF;
+        else if (speed)
+            currState = MEDIUM;
+        break;
+    case MEDIUM:
+        setSpeed(medium_rpm);
+        if (onoff)
+            currState = OFF;
+        else if (speed)
+            currState = FAST;
+        break;
+    case FAST:
+        setSpeed(fast_rpm);
+        if (onoff) {
+            currState = OFF;
+            setSpeed(stop_rpm);
+        } else if (speed){
+            currState = SLOW;
+            setSpeed(slow_rpm);
+        }
+        break;
+    default:
+        printf("ERROR: unexpected state: %d", currState);
+        exit(1);
+    }
 }
 
 int main() {
     while (1) {
-        updateState(currState);
+        updateState();
         sleep(1);  // sleep 1 second
     }
 }
