@@ -18,8 +18,8 @@
 #include <unistd.h>  // sleep(3)
 #include <stdbool.h> // bool, true, false
 
-typedef enum  {OFF, SLOW, MEDIUM, FAST} CurrState;
-CurrState currState = OFF;
+typedef enum  {OFF, SLOW, MEDIUM, FAST} FanState;
+FanState currState = OFF;
 typedef uint32_t RPM;
 RPM currentSpeed_rpm = 0;
 static RPM const stop_rpm = 0;
@@ -50,10 +50,10 @@ bool changeSpeedButton() {
     return retval;
 }
 
-void displayState(CurrState inState,
+void displayState(FanState inState,
                   bool onoff_pressed, bool speed_pressed,
-                  CurrState outState) {
-    typedef struct {CurrState s; char const * const txt;} MapEnumToText;
+                  FanState outState) {
+    typedef struct {FanState s; char const * const txt;} MapEnumToText;
     MapEnumToText map[] = {
         {OFF, "OFF"},
         {SLOW, "SLOW"},
@@ -72,7 +72,7 @@ void updateState() {
     bool onoff_pressed = onOffButton();
     bool speed_pressed = changeSpeedButton();
 
-    CurrState inState = currState;
+    FanState inState = currState;
 
     switch (currState) {
     case OFF:
@@ -98,7 +98,7 @@ void updateState() {
         printf("ERROR: unexpected state: %d", currState);
         exit(1);
     }
-    CurrState outState = currState;
+    FanState outState = currState;
     displayState(inState, onoff_pressed, speed_pressed, outState);
 }
 
