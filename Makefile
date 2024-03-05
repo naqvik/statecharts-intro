@@ -1,5 +1,7 @@
 # build 3-speed fan controller
 
+CFLAGS := -Wall -Wextra -pedantic
+
 main : main.c
 	$(CC) $(CFLAGS) -o $@ $<
 
