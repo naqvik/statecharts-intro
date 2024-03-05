@@ -75,11 +75,7 @@ void displayState(FanState inState,
 
     printf("out-state: %7s\n", map[outState].txt);
 }
-void fan_updateState(Fan* f) {
-    // poll the two buttons
-    bool onoff_pressed = onOffButton();
-    bool speed_pressed = changeSpeedButton();
-
+void fan_updateState(Fan* f, bool onoff_pressed, bool speed_pressed) {
     FanState inState = f->currState;
 
     switch (f->currState) {
@@ -115,7 +111,11 @@ int main() {
     fan_init(&f);
     
     while (1) {
-        fan_updateState(&f);
+        // poll the two buttons
+        bool onoff_pressed = onOffButton();
+        bool speed_pressed = changeSpeedButton();
+
+        fan_updateState(&f, onoff_pressed, speed_pressed);
         sleep(1);  // sleep 1 second
     }
 }
