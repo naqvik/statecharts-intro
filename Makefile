@@ -4,8 +4,10 @@ CFLAGS := -Wall -Wextra -pedantic
 
 main : main.c
 	$(CC) $(CFLAGS) -o $@ $<
+test-main : main.c
+	$(CC) $(CFLAGS) -DTEST -o $@ $<  && ./$@
 
 mostlyclean :
-	rm -f main
+	rm -f main test-main
 clean : mostlyclean
 	@echo "Cleaning build"

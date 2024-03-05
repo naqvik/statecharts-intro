@@ -106,6 +106,7 @@ void fan_updateState(Fan* f, bool onoff_pressed, bool speed_pressed) {
     displayState(inState, onoff_pressed, speed_pressed, outState);
 }
 
+#ifndef TEST
 int main() {
     Fan f;
     fan_init(&f);
@@ -119,3 +120,34 @@ int main() {
         sleep(1);  // sleep 1 second
     }
 }
+#else // TEST defined
+
+typedef struct {
+    FanState inState;
+    bool onoff_pressed;
+    bool speed_pressed;
+    FanState outState;
+} TestRecord;
+TestRecord testRecords[] = {
+    // in-state, onoff, speed, out-state
+    {OFF, false, false, OFF,},
+    {OFF, false, true, SLOW,},
+    {OFF, true, false, SLOW,},
+    {OFF, true, true, OFF,},
+
+    {SLOW, false, false, SLOW,},
+    {SLOW, false, true, MEDIUM,},
+    {SLOW, true, false, OFF,},
+    {SLOW, true, true, OFF,},
+
+    {MEDIUM, false, false, MEDIUM,},
+    {MEDIUM, false, true, FAST,},
+    {MEDIUM, true, false, OFF,},
+    {MEDIUM, true, true, OFF,},
+
+    {FAST, false, false, FAST,},
+    {FAST, false, true, SLOW,},
+    {FAST, true, false, OFF,},
+    {FAST, true, true, OFF,},
+};
+#endif
