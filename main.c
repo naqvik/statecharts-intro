@@ -150,4 +150,31 @@ TestRecord testRecords[] = {
     {FAST, true, false, OFF,},
     {FAST, true, true, OFF,},
 };
+
+int main() {
+    Fan f;
+    fan_init(&f);
+
+    uint32_t n_records = sizeof(testRecords)/sizeof(testRecords[0]);
+
+    for (int i=0; i < n_records; ++i) {
+        // given the current state and button press inputs
+        f.currState = testRecords[i].inState;
+        bool onoff_pressed = testRecords[i].onoff_pressed;
+        bool speed_pressed = testRecords[i].speed_pressed;
+
+        // then, when the state is updated
+        fan_updateState(&f, onoff_pressed, speed_pressed);
+
+        // the new state is equal to the predicted state
+        if (f.currState == testRecords[i].outState)
+            continue;
+        else {
+            fprintf(stderr, "Error: expected state %d\n",
+                    testRecords[i].outState);
+            fprintf(stderr, "       got state %d\n",
+                    f.currState);
+        }
+    }
+}
 #endif
