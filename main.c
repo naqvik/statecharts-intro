@@ -81,27 +81,18 @@ void updateState() {
         break;
     case SLOW:
         setSpeed(slow_rpm);
-        if (onoff_pressed)
-            currState = OFF;
-        else if (speed_pressed)
-            currState = MEDIUM;
+        if (onoff_pressed) currState = OFF;
+        if (speed_pressed) currState = MEDIUM;
         break;
     case MEDIUM:
         setSpeed(medium_rpm);
-        if (onoff_pressed)
-            currState = OFF;
-        else if (speed_pressed)
-            currState = FAST;
+        if (onoff_pressed) currState = OFF;
+        if (speed_pressed) currState = FAST;
         break;
     case FAST:
         setSpeed(fast_rpm);
-        if (onoff_pressed) {
-            currState = OFF;
-            setSpeed(stop_rpm);
-        } else if (speed_pressed){
-            currState = SLOW;
-            setSpeed(slow_rpm);
-        }
+        if (onoff_pressed) currState = OFF;
+        if (speed_pressed) currState = SLOW;
         break;
     default:
         printf("ERROR: unexpected state: %d", currState);
