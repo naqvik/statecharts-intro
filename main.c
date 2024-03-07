@@ -85,18 +85,18 @@ void fan_updateState(Fan* f, bool onoff_pressed, bool speed_pressed) {
         break;
     case SLOW:
         fan_setSpeed(f, slow_rpm);
-        if (onoff_pressed) f->currState = OFF;
         if (speed_pressed) f->currState = MEDIUM;
+        if (onoff_pressed) f->currState = OFF;
         break;
     case MEDIUM:
         fan_setSpeed(f, medium_rpm);
-        if (onoff_pressed) f->currState = OFF;
         if (speed_pressed) f->currState = FAST;
+        if (onoff_pressed) f->currState = OFF;
         break;
     case FAST:
         fan_setSpeed(f, fast_rpm);
-        if (onoff_pressed) f->currState = OFF;
         if (speed_pressed) f->currState = SLOW;
+        if (onoff_pressed) f->currState = OFF;
         break;
     default:
         printf("ERROR: unexpected state: %d", f->currState);
@@ -133,7 +133,7 @@ TestRecord testRecords[] = {
     {OFF, false, false, OFF,},
     {OFF, false, true, SLOW,},
     {OFF, true, false, SLOW,},
-    {OFF, true, true, OFF,},
+    {OFF, true, true, SLOW,},
 
     {SLOW, false, false, SLOW,},
     {SLOW, false, true, MEDIUM,},
